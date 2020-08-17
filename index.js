@@ -1,17 +1,18 @@
 const { ServiceBroker } = require('moleculer');
+const path = require('path');
 
-const broker = new ServiceBroker();
-
-broker.createService({
-    name: 'math',
-    actions: {
-        add(ctx) {
-            return Number(ctx.params.num1) + Number(ctx.params.num2)
-        }
-    }
-});
-
-broker
-    .start()
-    .then(() => broker.call('math.add', {num1: 2, num2: 4}))
-    .then(res => console.log(res))
+(async() => {
+    const broker  = new ServiceBroker({
+        logger: console,
+        transporter: null,
+        hotReload: true
+    });
+    
+    broker.loadService(path.join(__dirname, './hello.service.js'));
+    
+    await broker.start();
+    
+    //Chamando o serviço
+    broker.call('hello.say');
+        
+})()
